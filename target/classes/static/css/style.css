@@ -148,6 +148,25 @@ a:hover { text-decoration: underline; }
     transition: opacity 0.5s ease-out;
 }
 
+/* Универсальный popup подтверждения */
+.confirm-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+#confirmPopup .popup-card {
+    max-width: 400px;
+    text-align: center;
+}
+
+#confirmMessage {
+    margin: 15px 0;
+    font-size: 1rem;
+}
+
+
 
 /* =========================
    Шапка / Задачи

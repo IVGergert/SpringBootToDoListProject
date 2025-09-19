@@ -32,6 +32,7 @@
     </div>
 
     <form class="task-form" th:action="@{/tasks/add}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
         <input type="text" name="name" placeholder="Название задачи" required>
         <input type="text" name="description" placeholder="Описание задачи" required>
         <input type="datetime-local" name="deadline" required>
@@ -39,6 +40,7 @@
     </form>
 
     <div class="task-list">
+        <!-- Невыполненные задачи -->
         <div th:each="task : ${tasks}" th:if="${task != null and !task.completed}"
              class="task-card" th:id="'task-' + ${task.id}">
             <h3 th:text="${task.name}">Задача</h3>
@@ -56,7 +58,8 @@
                                  data-task-description=${task.description},
                                  data-task-deadline=${#temporals.format(task.deadline, 'yyyy-MM-dd''T''HH:mm')}"
                         onclick="openEditPopup(this)">✏ Изменить</button>
-                <form th:action="@{/tasks/delete/{id}(id=${task.id})}" method="get">
+                <form th:action="@{/tasks/delete/{id}(id=${task.id})}" method="get"
+                      onsubmit="return handleDelete(event, this)">
                     <button type="submit" class="btn delete">🗑 Удалить</button>
                 </form>
             </div>
@@ -80,7 +83,8 @@
                                  data-task-description=${task.description},
                                  data-task-deadline=${#temporals.format(task.deadline, 'yyyy-MM-dd''T''HH:mm')}"
                         onclick="openEditPopup(this)">✏ Изменить</button>
-                <form th:action="@{/tasks/delete/{id}(id=${task.id})}" method="get">
+                <form th:action="@{/tasks/delete/{id}(id=${task.id})}" method="get"
+                      onsubmit="return handleDelete(event, this)">
                     <button type="submit" class="btn delete">🗑 Удалить</button>
                 </form>
             </div>
@@ -96,7 +100,7 @@
             <div th:if="${profileError}" class="error-message" th:text="${profileError}"></div>
             <div th:if="${profileUpdated}" class="success-message" th:text="'Профиль успешно обновлен!'"></div>
 
-            <form id="profileForm" th:action="@{/profile/update/{id}(id=${user.id})}" method="post">
+            <form id="profileForm" th:action="@{/profile/update/{id}(id=${user.id})}" method="post" onsubmit="return handleEditProfile(event, this)">
                 <input type="hidden" name="id" th:value="${user.id}">
                 <label>Имя</label>
                 <input type="text" name="name" th:value="${user.name}" required>
@@ -113,7 +117,8 @@
                     <button type="button" class="cancel-btn" onclick="closeProfilePopup()">Отмена</button>
                 </div>
             </form>
-            <form th:action="@{/logout}" method="post">
+            <form th:action="@{/logout}" method="post" onsubmit="return handleLogout(event, this)">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                 <button type="submit" class="logout-btn">🚪 Выйти</button>
             </form>
         </div>
@@ -124,7 +129,7 @@
         <div class="popup-card">
             <button class="close-btn" onclick="closeEditPopup()">×</button>
             <h2>✏ Редактировать задачу</h2>
-            <form id="editTaskForm" method="post">
+            <form id="editTaskForm" method="post" onsubmit="return handleEditTask(event, this)">
                 <input type="hidden" name="id" id="editTaskId">
                 <label>Название задачи</label>
                 <input type="text" name="name" id="editTaskName" required>
@@ -137,6 +142,18 @@
                     <button type="button" class="cancel-btn" onclick="closeEditPopup()">Отмена</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Универсальное подтверждение -->
+    <div id="confirmPopup" class="popup-overlay hidden">
+        <div class="popup-card">
+            <h2>Подтверждение</h2>
+            <p id="confirmMessage">Вы уверены?</p>
+            <div class="confirm-actions">
+                <button id="confirmYes" class="save-btn">✅ Да</button>
+                <button id="confirmNo" class="cancel-btn">❌ Нет</button>
+            </div>
         </div>
     </div>
 </div>
