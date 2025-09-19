@@ -1,0 +1,13 @@
+gergert\todo\Controller\MainController.class
+gergert\todo\repository\TaskRepository.class
+gergert\todo\TodoApplication.class
+gergert\todo\Service\UserService.class
+gergert\todo\Controller\TaskController.class
+gergert\todo\Controller\AuthController.class
+gergert\todo\Config\SecurityConfig.class
+gergert\todo\Model\User.class
+gergert\todo\Service\CustomUserDetailsService.class
+gergert\todo\Controller\UserController.class
+gergert\todo\Model\Task.class
+gergert\todo\repository\UserRepository.class
+gergert\todo\Service\TaskService.class

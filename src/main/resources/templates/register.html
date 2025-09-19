@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Регистрация - Менеджер задач</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="auth-container">
+    <div class="auth-card">
+        <h2>📋 Регистрация</h2>
+
+        <div th:if="${error}" class="error-message" th:text="${error}"></div>
+
+        <form th:action="@{/register}" method="post" th:object="${user}">
+            <div class="form-group">
+                <label>Имя:</label>
+                <input type="text" th:field="*{name}" required placeholder="Введите ваше имя">
+            </div>
+
+            <div class="form-group">
+                <label>Фамилия:</label>
+                <input type="text" th:field="*{surname}" required placeholder="Введите вашу фамилию">
+            </div>
+
+            <div class="form-group">
+                <label>Отчество:</label>
+                <input type="text" th:field="*{patronymic}" placeholder="Введите ваше отчество (необязательно)">
+            </div>
+
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" th:field="*{email}" required placeholder="Введите ваш email">
+            </div>
+
+            <div class="form-group">
+                <label>Пароль:</label>
+                <input type="password" th:field="*{password}" required placeholder="Придумайте пароль">
+            </div>
+
+            <button type="submit" class="btn-primary">Зарегистрироваться</button>
+        </form>
+
+        <div class="auth-links">
+            <p>Уже есть аккаунт? <a th:href="@{/login}">Войти</a></p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

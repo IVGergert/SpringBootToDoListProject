@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Менеджер задач</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/js/taskScript.js" defer></script>
+</head>
+<body th:attr="data-open-profile=${openProfile}">
+<div class="container">
+    <header>
+        <h1>📋 Менеджер задач</h1>
+        <div class="profile-btn">
+            <button onclick="openProfilePopup()">👤 Профиль</button>
+        </div>
+    </header>
+
+    <div class="notification-area">
+        <div th:if="${param.taskAdded}" class="success-message">Задача добавлена!</div>
+        <div th:if="${param.taskUpdated}" class="success-message">Задача обновлена!</div>
+        <div th:if="${param.taskDeleted}" class="success-message">Задача удалена!</div>
+    </div>
+
+    <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="🔍 Поиск задач..." onkeyup="filterTasks()">
+    </div>
+
+    <div class="filters">
+        <button onclick="showAllTasks()">Все</button>
+        <button onclick="showCompleted()">Выполненные</button>
+        <button onclick="showNotCompleted()">Невыполненные</button>
+    </div>
+
+    <form class="task-form" th:action="@{/tasks/add}" method="post">
+        <input type="text" name="name" placeholder="Название задачи" required>
+        <input type="text" name="description" placeholder="Описание задачи" required>
+        <input type="datetime-local" name="deadline" required>
+        <button type="submit">➕ Добавить</button>
+    </form>
+
+    <div class="task-list">
+        <div th:each="task : ${tasks}" th:if="${task != null and !task.completed}"
+             class="task-card" th:id="'task-' + ${task.id}">
+            <h3 th:text="${task.name}">Задача</h3>
+            <p th:text="${task.description}">Описание</p>
+            <p>📅 Создано: <span th:text="${#temporals.format(task.createdAt, 'dd-MM-yyyy HH:mm')}"></span></p>
+            <p>⏰ Дедлайн: <span th:text="${#temporals.format(task.deadline, 'dd-MM-yyyy HH:mm')}"></span></p>
+
+            <div class="task-actions">
+                <form th:action="@{/tasks/toggle/{id}(id=${task.id})}" method="get">
+                    <button type="submit" class="btn complete">✔ Завершить</button>
+                </form>
+                <button type="button" class="btn edit"
+                        th:attr="data-task-id=${task.id},
+                                 data-task-name=${task.name},
+                                 data-task-description=${task.description},
+                                 data-task-deadline=${#temporals.format(task.deadline, 'yyyy-MM-dd''T''HH:mm')}"
+                        onclick="openEditPopup(this)">✏ Изменить</button>
+                <form th:action="@{/tasks/delete/{id}(id=${task.id})}" method="get">
+                    <button type="submit" class="btn delete">🗑 Удалить</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Выполненные задачи -->
+        <div th:each="task : ${tasks}" th:if="${task != null and task.completed}"
+             class="task-card completed" th:id="'task-' + ${task.id}">
+            <h3 th:text="${task.name}" class="strikethrough">Задача</h3>
+            <p th:text="${task.description}" class="strikethrough">Описание</p>
+            <p>📅 Создано: <span th:text="${#temporals.format(task.createdAt, 'dd-MM-yyyy HH:mm')}"></span></p>
+            <p>⏰ Дедлайн: <span th:text="${#temporals.format(task.deadline, 'dd-MM-yyyy HH:mm')}"></span></p>
+
+            <div class="task-actions">
+                <form th:action="@{/tasks/toggle/{id}(id=${task.id})}" method="get">
+                    <button type="submit" class="btn complete">↩ Возобновить</button>
+                </form>
+                <button type="button" class="btn edit"
+                        th:attr="data-task-id=${task.id},
+                                 data-task-name=${task.name},
+                                 data-task-description=${task.description},
+                                 data-task-deadline=${#temporals.format(task.deadline, 'yyyy-MM-dd''T''HH:mm')}"
+                        onclick="openEditPopup(this)">✏ Изменить</button>
+                <form th:action="@{/tasks/delete/{id}(id=${task.id})}" method="get">
+                    <button type="submit" class="btn delete">🗑 Удалить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Профиль -->
+    <div id="profilePopup" class="popup-overlay hidden">
+        <div class="popup-card">
+            <button class="close-btn" onclick="closeProfilePopup()">×</button>
+            <h2>👤 Профиль пользователя</h2>
+
+            <div th:if="${profileError}" class="error-message" th:text="${profileError}"></div>
+            <div th:if="${profileUpdated}" class="success-message" th:text="'Профиль успешно обновлен!'"></div>
+
+            <form id="profileForm" th:action="@{/profile/update/{id}(id=${user.id})}" method="post">
+                <input type="hidden" name="id" th:value="${user.id}">
+                <label>Имя</label>
+                <input type="text" name="name" th:value="${user.name}" required>
+                <label>Фамилия</label>
+                <input type="text" name="surname" th:value="${user.surname}" required>
+                <label>Отчество</label>
+                <input type="text" name="patronymic" th:value="${user.patronymic}">
+                <label>Email</label>
+                <input type="email" name="email" th:value="${user.email}" required>
+                <label>Пароль</label>
+                <input type="password" name="password" placeholder="●●●●●●●●">
+                <div class="profile-actions">
+                    <button type="submit" class="save-btn">💾 Сохранить</button>
+                    <button type="button" class="cancel-btn" onclick="closeProfilePopup()">Отмена</button>
+                </div>
+            </form>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="logout-btn">🚪 Выйти</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Редактирование задачи -->
+    <div id="editTaskPopup" class="popup-overlay hidden">
+        <div class="popup-card">
+            <button class="close-btn" onclick="closeEditPopup()">×</button>
+            <h2>✏ Редактировать задачу</h2>
+            <form id="editTaskForm" method="post">
+                <input type="hidden" name="id" id="editTaskId">
+                <label>Название задачи</label>
+                <input type="text" name="name" id="editTaskName" required>
+                <label>Описание задачи</label>
+                <input type="text" name="description" id="editTaskDescription" required>
+                <label>Deadline</label>
+                <input type="datetime-local" name="deadline" id="editTaskDeadline" required>
+                <div class="profile-actions">
+                    <button type="submit" class="save-btn">💾 Сохранить</button>
+                    <button type="button" class="cancel-btn" onclick="closeEditPopup()">Отмена</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,13 @@
+D:\Учеба\2 курс\Проекты\todo\src\main\java\gergert\todo\Config\SecurityConfig.java
+D:\Учеба\2 курс\Проекты\todo\src\main\java\gergert\todo\Controller\AuthController.java
+D:\Учеба\2 курс\Проекты\todo\src\main\java\gergert\todo\Controller\MainController.java
+D:\Учеба\2 курс\Проекты\todo\src\main\java\gergert\todo\Controller\TaskController.java
+D:\Учеба\2 курс\Проекты\todo\src\main\java\gergert\todo\Controller\UserController.java
+D:\Учеба\2 курс\Проекты\todo\src\main\java\gergert\todo\Model\Task.java
+D:\Учеба\2 курс\Проекты\todo\src\main\java\gergert\todo\Model\User.java
+D:\Учеба\2 курс\Проекты\todo\src\main\java\gergert\todo\repository\TaskRepository.java
+D:\Учеба\2 курс\Проекты\todo\src\main\java\gergert\todo\repository\UserRepository.java
+D:\Учеба\2 курс\Проекты\todo\src\main\java\gergert\todo\Service\CustomUserDetailsService.java
+D:\Учеба\2 курс\Проекты\todo\src\main\java\gergert\todo\Service\TaskService.java
+D:\Учеба\2 курс\Проекты\todo\src\main\java\gergert\todo\Service\UserService.java
+D:\Учеба\2 курс\Проекты\todo\src\main\java\gergert\todo\TodoApplication.java
